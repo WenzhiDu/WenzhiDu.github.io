@@ -438,17 +438,49 @@ summary {
 </div>
 <div id="analysis" class="section level2">
 <h2>Analysis</h2>
-<p>To address the question about how strong the correlation between the parents’ industry and children’s industry, we will need a proxy to represent relation. However, because the industry sector data have rather random coarse-graining level (that means some sector include more possibility of jobs for example), it does not make sense to give any absolute result of the strength of the correlation. Nevertheless, it make sense to compare between different years, and between different conditions (leaving home at 16 years old or not) to see if one of the group has more likelihood for children to inherit their parents’ career path. When doing the comparison, we can compare the fraction of observations in that SAME_IND is true. We call this fraction <span class="math inline">\(p_i\)</span> for situation <span class="math inline">\(i\)</span>. Then we shall formulate following hypothesis to test.</p>
-<div id="q1-has-there-been-more-independency-for-children-to-choose-their-career-over-the-years" class="section level3">
-<h3>Q1: has there been more independency for children to choose their career, over the years?</h3>
-<p>$H_0: $ The independency for children to choose their career has not changed by year. $H_a: $ There is a change.</p>
-<p>To formulate it as a question to be answered with regression, we can say, if we ansatz a modell</p>
-<p><span class="math inline">\(p_{SAME\_IND} = \beta_0 + \beta_1 YEAR\)</span>, then</p>
-<p><span class="math inline">\(H_0: \beta_1 = 0\)</span>, <span class="math inline">\(H_a: \beta_1 \ne 0\)</span>.</p>
+<p>To address the question about how strong the correlation between the parents’ industry and children’s industry, we can consider a logistic model that predicts whether the children and parents have same industry code based on year and whether the child has left home at the age of 16. Once we have the model, we may assess the p-value of the model to see if we should reject the null hypothesis that the factor (year or whether the child has left home at 16) has an effect.</p>
+<div id="model-logistic-regress" class="section level3">
+<h3>Model: logistic regress</h3>
+<p>The model is defined as</p>
+<p><span class="math inline">\(logit(p) ~ \beta_0 + \beta_1 x_1 + \beta_2 x_2 + \beta_{12}x_1x_2\)</span></p>
+<p>where <span class="math inline">\(p\)</span> is the probability the child has the same industry sector as parent (SAME_IND is TRUE), <span class="math inline">\(x_1\)</span> is years, and <span class="math inline">\(x_2\)</span> is whether the child is with parent at 16 (WITH_PARENT is TRUE).</p>
+<p>Null hypothesis <span class="math inline">\(H_0: \beta_1 =\beta_2 = 0\)</span> and alternative hypothesis is one of them is none zero.</p>
 </div>
-<div id="q2-does-leaving-home-early" class="section level3">
-<h3>Q2: does leaving home early</h3>
 </div>
+<div id="result" class="section level2">
+<h2>Result</h2>
+<p>We do the logistic regression using glm in r:</p>
+<pre class="r"><code>my.model &lt;- glm(SAME_IND ~ WITH_PARENT + YEAR, family=&quot;binomial&quot;, data=GSS)
+summary(my.model)</code></pre>
+<pre><code>## 
+## Call:
+## glm(formula = SAME_IND ~ WITH_PARENT + YEAR, family = &quot;binomial&quot;, 
+##     data = GSS)
+## 
+## Deviance Residuals: 
+##     Min       1Q   Median       3Q      Max  
+## -0.5751  -0.5172  -0.4712  -0.4258   2.3629  
+## 
+## Coefficients:
+##                   Estimate Std. Error z value Pr(&gt;|z|)    
+## (Intercept)     27.9847926  1.8741664  14.932  &lt; 2e-16 ***
+## WITH_PARENTTRUE  0.3125664  0.0498591   6.269 3.63e-10 ***
+## YEAR            -0.0152196  0.0009385 -16.217  &lt; 2e-16 ***
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## (Dispersion parameter for binomial family taken to be 1)
+## 
+##     Null deviance: 45403  on 64813  degrees of freedom
+## Residual deviance: 45076  on 64811  degrees of freedom
+## AIC: 45082
+## 
+## Number of Fisher Scoring iterations: 5</code></pre>
+<pre class="r"><code>exp(coef(my.model))</code></pre>
+<pre><code>##     (Intercept) WITH_PARENTTRUE            YEAR 
+##    1.424430e+12    1.366929e+00    9.848956e-01</code></pre>
+<p>We can see that the null hypothesis can be rejected at the level of <span class="math inline">\(\alpha=0.001\)</span>, and in fact the effect is very significant. The odd ratio for those with parent over not with parent is 1.37 to have the same career as their parents. That means staying with parent at 16 makes a children more likely to inherit at least one of his/her parents industry sector choice.</p>
+<p>On the other hand, this effect is decreasing in average by an odd ratio of 0.985 per year. That means along the years, more children are being independent in choosing their careers.</p>
 </div>
 
 

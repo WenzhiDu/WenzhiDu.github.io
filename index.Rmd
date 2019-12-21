@@ -69,17 +69,24 @@ GSS %>% select(WITH_PARENT) %>% ggplot(aes(x=WITH_PARENT)) + geom_histogram(stat
 
 
 ## Analysis
-To address the question about how strong the correlation between the parents' industry and children's industry, we will need a proxy to represent relation.  However, because the industry sector data have rather random coarse-graining level (that means some sector include more possibility of jobs for example), it does not make sense to give any absolute result of the strength of the correlation.  Nevertheless, it make sense to compare between different years, and between different conditions (leaving home at 16 years old or not) to see if one of the group has more likelihood for children to inherit their parents' career path. When doing the comparison, we can compare the fraction of observations in that SAME_IND is true. We call this fraction $p_i$ for situation $i$. Then we shall formulate following hypothesis to test.
+To address the question about how strong the correlation between the parents' industry and children's industry, we can consider a logistic model that predicts whether the children and parents have same industry code based on year and whether the child has left home at the age of 16. Once we have the model, we may assess the p-value of the model to see if we should reject the null hypothesis that the factor (year or whether the child has left home at 16) has an effect. 
 
-### Q1: has there been more independency for children to choose their career, over the years?
-$H_0: $ The independency for children to choose their career has not changed by year.
-$H_a: $ There is a change.
+### Model: logistic regress
+The model is defined as
 
-To formulate it as a question to be answered with regression, we can say, if we ansatz a modell
+$logit(p) ~ \beta_0 + \beta_1 x_1 + \beta_2 x_2 + \beta_{12}x_1x_2$
 
-$p_{SAME\_IND} = \beta_0 + \beta_1 YEAR$, then
+where $p$ is the probability the child has the same industry sector as parent (SAME_IND is TRUE), $x_1$ is years, and $x_2$ is whether the child is with parent at 16 (WITH_PARENT is TRUE). 
 
-$H_0: \beta_1 = 0$, $H_a: \beta_1 \ne 0$.
+Null hypothesis $H_0: \beta_1 =\beta_2 = 0$ and alternative hypothesis is one of them is none zero. 
 
+## Result
+We do the logistic regression using glm in r:
+```{r}
+my.model <- glm(SAME_IND ~ WITH_PARENT + YEAR, family="binomial", data=GSS)
+summary(my.model)
+exp(coef(my.model))
+```
+We can see that the null hypothesis can be rejected at the level of $\alpha=0.001$, and in fact the effect is very significant. The odd ratio for those with parent over not with parent is 1.37 to have the same career as their parents.  That means staying with parent at 16 makes a children more likely to inherit at least one of his/her parents industry sector choice. 
 
-### Q2: does leaving home early
+On the other hand, this effect is decreasing in average by an odd ratio of 0.985 per year.  That means along the years, more children are being independent in choosing their careers.  
