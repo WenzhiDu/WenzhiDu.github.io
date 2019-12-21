@@ -1,0 +1,48 @@
+---
+title: "project"
+author: "Wenzhi Du"
+date: "2019/12/20"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library("tidyverse")
+source("GSS.r")
+```
+
+## Overview
+Family bond builds up heritages, and in the meantime, it creates friction for social changes. The intergenerational mobility has been understood to play a central role in social fluidity. Consider the racial equality at workspace for example. Even if equal opportunity employers enforce racial-blind hiring process, equality remains hard to reach a satisfiable level. Among the many complicated social factors contribute to the difficulty of realizing truly equal opportunity, I would like to study the effect of family influence. 
+
+In the past, lots of family lineage are bounded with specific jobs, making a strong force against social fluidity. As a contrast, modern education encourages and facilitates young people to pursue their own interest that may or may not be the same as their parents. Nevertheless, the family influence is still a considerable factor for people’s career choice. In this study I will try to quantify the correlation between children and parents’ industry sector, and explore if the correlation is related to several factors. The answer to this project may help people finding ways to a more equal world. 
+
+
+## Data
+The data I use is extracted from GSS. We use following data:
+Variables:
+| YEAR     | Gss year for this respondent          |
+|----------|---------------------------------------|
+| ID       | Respondent id number                  |
+| INDUS10  | Respondent industry code (naics 2007) |
+| PAIND10  | Fathers industry code (naics 2007)    |
+| MAIND10  | Mothers industry code (naics 2007)    |
+| FAMILY16 | Living with parents when 16 yrs old   |
+| BALLOT   | Ballot used for interview             |
+
+Now we look at the variables. Firstly, notice that the number of observations in each year is different.
+
+```{r, echo=FALSE}
+GSS %>% group_by(YEAR) %>% tally() %>% ggplot(aes(x=YEAR, y=n)) + geom_line()
+```
+
+We will want to look at whether the respondents work in the same industry as their parents. The industry sector are coded with numbers. For the 64814 observations in total, about 300 different industry codes are included. The 10 most common industry codes for the respondent, father and mother are
+```{r}
+GSS %>% select(INDUS10) %>% ggplot(aes(x=INDUS10)) + geom_histogram()
+GSS %>% select(PAIND10) %>% ggplot(aes(x=PAIND10)) + geom_histogram()
+GSS %>% select(MAIND10) %>% ggplot(aes(x=MAIND10)) + geom_histogram()
+```
+
+Notice that industry sector code 0 means not in any industry. A huge fraction of parents, especially mothers, are in this category.
+
+The data I want to use to predictors is whether the kid stay 
+  

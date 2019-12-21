@@ -1,0 +1,9 @@
+infile dictionary {
+    _column(1)    numeric                               YEAR   %20f  "Gss year for this respondent                       "
+   _column(21)    numeric                                ID_   %20f  "Respondent id number"
+   _column(41)    numeric                            INDUS10   %20f  "Rs industry code (naics 2007)"
+   _column(61)    numeric                            PAIND10   %20f  "Fathers industry code (naics 2007)"
+   _column(81)    numeric                            MAIND10   %20f  "Mothers industry code (naics 2007)"
+  _column(101)    numeric                           FAMILY16   %20f  "Living with parents when 16 yrs old"
+  _column(121)    numeric                             BALLOT   %20f  "Ballot used for interview"
+}
